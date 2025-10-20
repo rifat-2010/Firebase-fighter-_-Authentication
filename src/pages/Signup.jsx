@@ -5,36 +5,25 @@ import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
 
 import MyContainer from "../components/MyContainer";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  updateProfile,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
 import { toast } from "react-toastify";
-import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useState } from "react";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
-  const { setLoading } = useContext(AuthContext);
 
   const handleSignup = (e) => {
     e.preventDefault();
-    const displayName = e.target.name?.value;
-    const photoURL = e.target.photo?.value;
     const email = e.target.email?.value;
     const password = e.target.password?.value;
 
-    console.log("signup function entered", email, password, {
-      displayName,
-      photoURL,
-    });
+    console.log("signup function entered", { email, password });
     // console.log(password.length);
-    if (password.length < 6) {
-      toast.error("Password should be at least 6 digit");
-      return;
-    }
+    // if (password.length < 6) {
+    //   toast.error("Password should be at least 6 digit");
+    //   return;
+    // }
 
     const regExp =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()\-_=+])[A-Za-z\d@$!%*?&#^()\-_=+]{8,}$/;
@@ -47,38 +36,12 @@ const Signup = () => {
       );
       return;
     }
-    //1st step : creat user
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        //2nd step : update profile
-        updateProfile(res.user, {
-          displayName,
-          photoURL,
-        })
-          .then(() => {
-            console.log(res);
-            // 3rd : email varification
-            sendEmailVerification(res.user)
-              .then((res) => {
-                console.log(res);
-                setLoading(false);
-                toast.success(
-                  "Signin successful, Check your email to valided your account."
-                );
-              })
-              .catch((e) => {
-                console.log(e);
-                toast.error(e.message);
-              });
-          })
-          .catch((e) => {
-            console.log(e);
-            toast.error(e.message);
-          });
         console.log(res);
         toast.success("Signup successful");
       })
-
       .catch((e) => {
         console.log(e);
         console.log(e.code);
@@ -134,24 +97,6 @@ const Signup = () => {
             </h2>
 
             <form onSubmit={handleSignup} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Rifatuzzaman Rifat"
-                  className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Photo</label>
-                <input
-                  type="text"
-                  name="photo"
-                  placeholder="Your Photo URL here"
-                  className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                />
-              </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Email</label>
                 <input
